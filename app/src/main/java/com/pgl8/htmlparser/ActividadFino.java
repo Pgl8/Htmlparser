@@ -18,7 +18,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 
 /**
- * Created by pepe on 19/08/14.
+ * Creado por pepe en 19/08/14.
  */
 public class ActividadFino extends Activity{
     /** Called when the activity is first created. */
