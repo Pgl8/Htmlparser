@@ -3,18 +3,19 @@ package com.pgl8.htmlparser;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * Created by pepe on 19/08/14.
@@ -37,53 +38,172 @@ public class ActividadFino extends Activity{
     //Necesita ser una tarea asíncrona
     //Haremos una clase interna para ello
     class obtenerHTML extends AsyncTask<String, Void, String> {
-        private int cont=0;
+        //private int cont=0;
+        //private String html1, html2, html3;
         //private static final String TAG = "Principal";
 
         @Override
         protected String doInBackground(String... params) {
-            //Log.v(TAG, control);
+        //protected ArrayList<String> doInBackground(String... params) {
+            //Antes de hacer nada hay que comprobar que existe conexión y de qué tipo
+            /*ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 
-            //Log.v(TAG, "SI");
-            HttpClient client = new DefaultHttpClient();
-            HttpGet request = new HttpGet("http://www.losvinosdejerez.com/productos.php?id=12");
+            //Comprobar conexión datos
+            boolean is3g = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+                    .isConnectedOrConnecting();
+            Log.v(TAG, "Comprobado 3g");
+            //Comprobar wifi
+            boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+                    .isConnectedOrConnecting();
+            Log.v(TAG, "Comprobado wifi");
+            ArrayList<String> cadenas = new ArrayList<String>();
 
-            try {
-                HttpResponse response = client.execute(request);
-                String html;
-                InputStream in = response.getEntity().getContent();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                StringBuilder str = new StringBuilder();
-                String line;
+            if (!is3g && !isWifi) {
+                //Mensaje sin conexión
+                Toast.makeText(getApplicationContext(), "Asegúrese de tener conexión.", Toast.LENGTH_LONG).show();
+            } else {
 
-                while ((line = reader.readLine()) != null) {
-                    if (cont == 688 || cont == 690 || cont == 691 || cont == 692 || cont == 693 ||
-                            cont == 694 || cont == 701 || cont == 703) {
-                        str.append(line);//.replace("<br />", "\n\n"));
+                //Si hay conexión por datos
+                if (is3g) {
+                    HttpClient client = new DefaultHttpClient();
+                    HttpGet request = new HttpGet("http://www.sherry.org/es/fichafino.cfm");
+
+                    try {
+                        HttpResponse response = client.execute(request);
+                        //String html;
+                        InputStream in = response.getEntity().getContent();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                        //String para Notas de cata
+                        StringBuilder str1 = new StringBuilder();
+                        //String para Elaboración
+                        StringBuilder str2 = new StringBuilder();
+                        //String para Servicio
+                        StringBuilder str3 = new StringBuilder();
+                        String line;
+
+                        while ((line = reader.readLine()) != null) {
+                            if (cont == 30) {
+                                str1.append(line);//.replace("<br />", "\n\n"));
+                            }
+                            if (cont == 32 || cont == 33) {
+                                str2.append(line);//.replace("<br />", "\n\n"));
+                            }
+                            if (cont == 36 || cont == 37) {
+                                str3.append(line);//.replace("<br />", "\n\n"));
+                            }
+                            cont++;
+                        }
+
+                        in.close();
+                        //html1 = str1.toString();
+                        cadenas.add(0, str1.toString());
+                        //html2 = str2.toString();
+                        cadenas.add(1, str2.toString());
+                        //html3 = str3.toString();
+                        cadenas.add(2, str3.toString());
+                        //return html;
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
                     }
-                    cont++;
+                    return cadenas;
+                }
+                Log.v(TAG, "bucle wifi");
+                //Conexión wifi
+                HttpClient client = new DefaultHttpClient();
+                HttpGet request = new HttpGet("http://www.sherry.org/es/fichafino.cfm");
+
+                try {
+                    HttpResponse response = client.execute(request);
+                    //String html;
+                    InputStream in = response.getEntity().getContent();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                    //String para Notas de cata
+                    StringBuilder str1 = new StringBuilder();
+                    //String para Elaboración
+                    StringBuilder str2 = new StringBuilder();
+                    //String para Servicio
+                    StringBuilder str3 = new StringBuilder();
+                    String line;
+
+                    while ((line = reader.readLine()) != null) {
+                        if (cont == 262) {
+                            str1.append(line);//.replace("<br />", "\n\n"));
+                        }
+                        if (cont == 267 || cont == 268) {
+                            str2.append(line);//.replace("<br />", "\n\n"));
+                        }
+                        if (cont == 282 || cont == 283) {
+                            str3.append(line);//.replace("<br />", "\n\n"));
+                        }
+                        cont++;
+                    }
+
+                    in.close();
+                    //html1 = str1.toString();
+                    cadenas.add(0, str1.toString());
+                    //html2 = str2.toString();
+                    cadenas.add(1, str2.toString());
+                    //html3 = str3.toString();
+                    cadenas.add(2, str3.toString());
+                    //return html;
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
                 }
 
-                in.close();
-                html = str.toString();
-                return html;
+            }
+            return cadenas;*/
+
+            //Métedo de obtención con JSOUP
+            HttpClient client = new DefaultHttpClient();
+            HttpGet request = new HttpGet("http://www.sherry.org/es/fichafino.cfm");
+            String html = null;
+            try {
+                HttpResponse response = client.execute(request);
+
+                String content = EntityUtils.toString(response.getEntity());
+                Document doc = Jsoup.parse(content);
+                Elements ele = doc.select("div.blanco");
+                for(Element element : ele){
+                    html = element.text();
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;
             }
 
+            return html;
         }
 
-        @Override
+        /*protected void onPostExecute(ArrayList<String> cadenas) {
+            if (cadenas != null) {
+                //Quitamos etiquetas HTML en el resultado
+                String cata = android.text.Html.fromHtml(cadenas.get(0)).toString();
+                String elab = android.text.Html.fromHtml(cadenas.get(1)).toString();
+                String cons = android.text.Html.fromHtml(cadenas.get(2)).toString();
+
+                //Cambiamos el TextView para el texto de salida
+                TextView txt1 = (TextView)findViewById(R.id.textView3);
+                txt1.setText(cata);
+                TextView txt2 = (TextView)findViewById(R.id.textView5);
+                txt2.setText(elab);
+                TextView txt3 = (TextView)findViewById(R.id.textView7);
+                txt3.setText(cons);
+            }
+        }*/
+
         protected void onPostExecute(String result) {
             if (result != null) {
                 //Quitamos etiquetas HTML en el resultado
-                String resultado = android.text.Html.fromHtml(result).toString();
+                //String resultado = android.text.Html.fromHtml(result).toString();
 
                 //Cambiamos el TextView para el texto de salida
-                TextView txt = (TextView)findViewById(R.id.TextView2);
-                txt.setText(resultado);
+                TextView txt = (TextView) findViewById(R.id.TextView3);
+                txt.setText(result);
             }
         }
     }
