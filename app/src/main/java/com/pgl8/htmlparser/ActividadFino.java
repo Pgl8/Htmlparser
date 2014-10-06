@@ -157,7 +157,7 @@ public class ActividadFino extends Activity{
             try {
                 Document doc = Jsoup.connect("http://www.sherry.org/es/fichafino.cfm").get();
                 contenido = doc.select("div.blanco");
-                Log.v(TAG, contenido.text());
+                //Log.v(TAG, contenido.get(2).html().replaceAll("<br>","\n"));
 
             } catch (IOException e) {
                 //e.printStackTrace();
@@ -191,11 +191,16 @@ public class ActividadFino extends Activity{
                 TextView txt1 = (TextView)findViewById(R.id.textView3);
                 TextView txt2 = (TextView)findViewById(R.id.textView5);
                 TextView txt3 = (TextView)findViewById(R.id.textView7);
+                TextView txt4 = (TextView)findViewById(R.id.textView9);
 
-                //Tenemos un conjunto de elementos, debemos recorrerlo y asignarlo a distintas variables
+                //Asignamos los elementos al objeto de la UI determinado
                 txt1.setText(result.get(0).text());
                 txt2.setText(result.get(1).text());
-                txt3.setText(result.get(2).text());
+                txt3.setText(result.get(3).text());
+
+                //Formateo para respetar saltos de línea en datos analíticos
+                txt4.setText(Jsoup.parse(result.get(2).html().replaceAll("(?i)<br[^>]*>",
+                                                                         "<pre>\n</pre>")).text());
             }
         }
     }
