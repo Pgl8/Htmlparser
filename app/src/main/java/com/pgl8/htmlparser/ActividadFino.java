@@ -3,16 +3,11 @@ package com.pgl8.htmlparser;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -37,13 +32,13 @@ public class ActividadFino extends Activity{
 
     //Necesita ser una tarea asíncrona
     //Haremos una clase interna para ello
-    class obtenerHTML extends AsyncTask<String, Void, String> {
+    class obtenerHTML extends AsyncTask<String, Void, Elements> {
         //private int cont=0;
         //private String html1, html2, html3;
-        //private static final String TAG = "Principal";
+        private static final String TAG = "Principal";
 
         @Override
-        protected String doInBackground(String... params) {
+        protected Elements doInBackground(String... params) {
         //protected ArrayList<String> doInBackground(String... params) {
             //Antes de hacer nada hay que comprobar que existe conexión y de qué tipo
             /*ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
@@ -157,26 +152,20 @@ public class ActividadFino extends Activity{
             }
             return cadenas;*/
 
-            //Métedo de obtención con JSOUP
-            HttpClient client = new DefaultHttpClient();
-            HttpGet request = new HttpGet("http://www.sherry.org/es/fichafino.cfm");
-            String html = null;
+            //Método de obtención con JSOUP
+            Elements contenido;
             try {
-                HttpResponse response = client.execute(request);
-
-                String content = EntityUtils.toString(response.getEntity());
-                Document doc = Jsoup.parse(content);
-                Elements ele = doc.select("div.blanco");
-                for(Element element : ele){
-                    html = element.text();
-                }
+                Document doc = Jsoup.connect("http://www.sherry.org/es/fichafino.cfm").get();
+                contenido = doc.select("div.blanco");
+                Log.v(TAG, contenido.text());
 
             } catch (IOException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                Log.e(TAG, "Error al cargar contenido", e);
                 return null;
             }
 
-            return html;
+            return contenido;
         }
 
         /*protected void onPostExecute(ArrayList<String> cadenas) {
@@ -196,14 +185,17 @@ public class ActividadFino extends Activity{
             }
         }*/
 
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Elements result) {
             if (result != null) {
-                //Quitamos etiquetas HTML en el resultado
-                //String resultado = android.text.Html.fromHtml(result).toString();
+                //Localizamos e inicializamos los elementos de la UI
+                TextView txt1 = (TextView)findViewById(R.id.textView3);
+                TextView txt2 = (TextView)findViewById(R.id.textView5);
+                TextView txt3 = (TextView)findViewById(R.id.textView7);
 
-                //Cambiamos el TextView para el texto de salida
-                TextView txt = (TextView) findViewById(R.id.TextView3);
-                txt.setText(result);
+                //Tenemos un conjunto de elementos, debemos recorrerlo y asignarlo a distintas variables
+                txt1.setText(result.get(0).text());
+                txt2.setText(result.get(1).text());
+                txt3.setText(result.get(2).text());
             }
         }
     }

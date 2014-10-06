@@ -8,7 +8,8 @@
     <TableLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:stretchColumns="0">
+        android:stretchColumns="0"
+        android:padding="10sp">
 
         <TableRow
             android:layout_width="fill_parent"
@@ -44,13 +45,16 @@
         </TableRow>
         <TableRow
             android:layout_width="200dp"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:padding="10sp">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="190dp"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
-                android:id="@+id/textView3" />
+                android:id="@+id/textView3"
+                android:paddingRight="15dp"
+                android:paddingLeft="5dp" />
         </TableRow>
         <TableRow
             android:layout_width="fill_parent"
@@ -66,13 +70,16 @@
         </TableRow>
         <TableRow
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:padding="10sp">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="190dp"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
-                android:id="@+id/textView5" />
+                android:id="@+id/textView5"
+                android:paddingRight="15sp"
+                android:paddingLeft="5sp" />
         </TableRow>
         <TableRow
             android:layout_width="fill_parent"
@@ -88,13 +95,16 @@
         </TableRow>
         <TableRow
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:padding="10sp">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="190dp"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
-                android:id="@+id/textView7" />
+                android:id="@+id/textView7"
+                android:paddingRight="15sp"
+                android:paddingLeft="5sp" />
         </TableRow>
 
     </TableLayout>
