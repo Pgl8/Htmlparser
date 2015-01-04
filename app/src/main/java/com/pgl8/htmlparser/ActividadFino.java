@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.jsoup.Jsoup;
@@ -16,6 +19,7 @@ import java.io.IOException;
  * Creado por pepe en 19/08/14.
  */
 public class ActividadFino extends Activity{
+
     /** Called when the activity is first created. */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +40,17 @@ public class ActividadFino extends Activity{
         //private int cont=0;
         //private String html1, html2, html3;
         private static final String TAG = "Principal";
+	    LinearLayout linlaHeaderProgress = (LinearLayout) findViewById(R.id.linlaHeaderProgress);
+	    ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView);
 
-        @Override
+	    @Override
+	    protected void onPreExecute() {
+		    //super.onPreExecute();
+		    linlaHeaderProgress.setVisibility(View.VISIBLE);
+		    scrollView.setVisibility(View.GONE);
+	    }
+
+	    @Override
         protected Elements doInBackground(String... params) {
         //protected ArrayList<String> doInBackground(String... params) {
             //Antes de hacer nada hay que comprobar que existe conexión y de qué tipo
@@ -201,6 +214,10 @@ public class ActividadFino extends Activity{
                 //Formateo para respetar saltos de línea en datos analíticos
                 txt4.setText(Jsoup.parse(result.get(2).html().replaceAll("(?i)<br[^>]*>",
                                                                          "<pre>\n</pre>")).text());
+
+	            //Quitamos Progress circle
+	            linlaHeaderProgress.setVisibility(View.GONE);
+	            scrollView.setVisibility(View.VISIBLE);
             }
         }
     }
